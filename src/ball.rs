@@ -22,7 +22,7 @@ struct Ball;
 struct Velocity(Vec2);
 
 const BALL_RADIUS: f32 = 12.;
-const BALL_SPEED: f32 = 300.0;
+const BALL_SPEED: f32 = 400.;
 
 fn setup_ball(
     mut commands: Commands,
