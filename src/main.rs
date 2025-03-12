@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+pub mod ball;
 pub mod game;
 pub mod island;
 pub mod player;

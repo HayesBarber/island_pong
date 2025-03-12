@@ -1,4 +1,4 @@
-use crate::{island, player, resolution};
+use crate::{ball, island, player, resolution};
 use bevy::prelude::*;
 pub struct GamePlugin;
 
@@ -8,6 +8,7 @@ impl Plugin for GamePlugin {
             player::PlayerPlugin,
             resolution::ResolutionPlugin,
             island::IslandPlugin,
+            ball::BallPlugin,
         ))
         .add_systems(Startup, setup_scene)
         .add_systems(Update, update_game);
