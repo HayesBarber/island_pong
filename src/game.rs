@@ -1,12 +1,16 @@
-use crate::{player, resolution};
+use crate::{island, player, resolution};
 use bevy::prelude::*;
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((player::PlayerPlugin, resolution::ResolutionPlugin))
-            .add_systems(Startup, setup_scene)
-            .add_systems(Update, update_game);
+        app.add_plugins((
+            player::PlayerPlugin,
+            resolution::ResolutionPlugin,
+            island::IslandPlugin,
+        ))
+        .add_systems(Startup, setup_scene)
+        .add_systems(Update, update_game);
     }
 }
 fn setup_scene(mut commands: Commands) {

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 pub mod game;
+pub mod island;
 pub mod player;
 pub mod resolution;
 
