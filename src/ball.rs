@@ -39,10 +39,30 @@ fn setup_ball(
     ));
 }
 
-fn move_ball(time: Res<Time>, mut query: Query<(&mut Transform, &Velocity), With<Ball>>) {
-    for (mut transform, velocity) in &mut query {
+fn move_ball(
+    time: Res<Time>,
+    resolution: Res<resolution::Resolution>,
+    mut query: Query<(&mut Transform, &mut Velocity), With<Ball>>,
+) {
+    for (mut transform, mut velocity) in &mut query {
         let delta = time.delta_secs();
+
         transform.translation.x += velocity.0.x * delta;
         transform.translation.y += velocity.0.y * delta;
+
+        let half_width = resolution.screen_dimensions.x / 2.0;
+        let half_height = resolution.screen_dimensions.y / 2.0;
+        let ball_radius = BALL_RADIUS;
+
+        if transform.translation.x + ball_radius >= half_width
+            || transform.translation.x - ball_radius <= -half_width
+        {
+            velocity.0.x = -velocity.0.x;
+        }
+        if transform.translation.y + ball_radius >= half_height
+            || transform.translation.y - ball_radius <= -half_height
+        {
+            velocity.0.y = -velocity.0.y;
+        }
     }
 }
