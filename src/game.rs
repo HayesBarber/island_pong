@@ -1,6 +1,5 @@
-use bevy::prelude::*;
-
 use crate::{player, resolution};
+use bevy::prelude::*;
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
