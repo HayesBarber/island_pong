@@ -13,6 +13,8 @@ fn main() {
                         title: String::from("Island Pong"),
                         position: WindowPosition::Centered(MonitorSelection::Primary),
                         resolution: Vec2::new(400., 512.).into(),
+                        resizable: false,
+                        decorations: false,
                         ..Default::default()
                     }),
                     ..Default::default()
