@@ -11,8 +11,8 @@ impl Plugin for IslandPlugin {
 
 #[derive(Component)]
 struct Island;
-const ISLAND_WIDTH: f32 = 200.;
-const ISLAND_HEIGHT: f32 = 20.;
+pub const ISLAND_WIDTH: f32 = 200.;
+pub const ISLAND_HEIGHT: f32 = 20.;
 
 fn setup_island(mut commands: Commands, resolution: Res<resolution::Resolution>) {
     commands.spawn((
