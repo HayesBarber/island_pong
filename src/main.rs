@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 pub mod game;
 pub mod player;
+pub mod resolution;
 
 fn main() {
     App::new()
