@@ -52,7 +52,16 @@ fn move_ball(
     )>,
     mut app_exit_events: EventWriter<AppExit>,
 ) {
-    let player_transform = query_set.p1().single().clone();
+    let player_half_width = PLAYER_WIDTH / 2.0;
+    let player_half_height = PLAYER_HEIGT / 2.0;
+    let (player_top, player_x, player_y) = {
+        let player_query = query_set.p1();
+        let player_transform = player_query.single();
+        let player_top = player_transform.translation.y + player_half_height;
+        let player_x = player_transform.translation.x;
+        let player_y = player_transform.translation.y;
+        (player_top, player_x, player_y)
+    };
 
     for (mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
         let delta = time.delta_secs();
@@ -75,20 +84,11 @@ fn move_ball(
         if ball_transform.translation.y - ball_radius <= -half_height {
             app_exit_events.send(AppExit::Success);
         }
-
-        let player_half_width = PLAYER_WIDTH / 2.0;
-        let player_half_height = PLAYER_HEIGT / 2.0;
-
         let ball_bottom = ball_transform.translation.y - ball_radius;
-        let player_top = player_transform.translation.y + player_half_height;
-
         let ball_x = ball_transform.translation.x;
-        let player_x = player_transform.translation.x;
-
         let x_collision =
             ball_x >= player_x - player_half_width && ball_x <= player_x + player_half_width;
-        let y_collision =
-            ball_bottom <= player_top && ball_bottom >= player_transform.translation.y;
+        let y_collision = ball_bottom <= player_top && ball_bottom >= player_y;
 
         if x_collision && y_collision {
             velocity.0.y = velocity.0.y.abs();
