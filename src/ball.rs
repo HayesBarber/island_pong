@@ -43,6 +43,7 @@ fn move_ball(
     time: Res<Time>,
     resolution: Res<resolution::Resolution>,
     mut query: Query<(&mut Transform, &mut Velocity), With<Ball>>,
+    mut app_exit_events: EventWriter<AppExit>,
 ) {
     for (mut transform, mut velocity) in &mut query {
         let delta = time.delta_secs();
@@ -59,10 +60,11 @@ fn move_ball(
         {
             velocity.0.x = -velocity.0.x;
         }
-        if transform.translation.y + ball_radius >= half_height
-            || transform.translation.y - ball_radius <= -half_height
-        {
+        if transform.translation.y + ball_radius >= half_height {
             velocity.0.y = -velocity.0.y;
+        }
+        if transform.translation.y - ball_radius <= -half_height {
+            app_exit_events.send(AppExit::Success);
         }
     }
 }
