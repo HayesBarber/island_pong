@@ -7,4 +7,10 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn setup_player() {}
+fn setup_player(mut commands: Commands) {
+    commands.spawn((Sprite {
+        color: Color::srgb(1., 1., 1.),
+        custom_size: Some(Vec2::new(100.0, 20.0)),
+        ..default()
+    },));
+}
