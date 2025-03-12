@@ -10,7 +10,7 @@ impl Plugin for PlayerPlugin {
 }
 
 #[derive(Component)]
-struct Player {}
+pub(crate) struct Player {}
 pub const PLAYER_WIDTH: f32 = 100.;
 pub const PLAYER_HEIGT: f32 = 20.;
 fn setup_player(mut commands: Commands, resolution: Res<resolution::Resolution>) {

@@ -1,6 +1,10 @@
 use bevy::{color::palettes::css::WHITE, prelude::*};
 
-use crate::{island::ISLAND_HEIGHT, resolution};
+use crate::{
+    island::ISLAND_HEIGHT,
+    player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
+    resolution,
+};
 
 pub struct BallPlugin;
 
@@ -38,33 +42,55 @@ fn setup_ball(
         Velocity(Vec2::new(1.0, -1.0).normalize() * BALL_SPEED),
     ));
 }
-
 fn move_ball(
     time: Res<Time>,
     resolution: Res<resolution::Resolution>,
-    mut query: Query<(&mut Transform, &mut Velocity), With<Ball>>,
+    mut query_set: ParamSet<(
+        Query<(&mut Transform, &mut Velocity), With<Ball>>,
+        Query<&Transform, With<player::Player>>,
+    )>,
     mut app_exit_events: EventWriter<AppExit>,
 ) {
-    for (mut transform, mut velocity) in &mut query {
+    let player_transform = query_set.p1().single().clone();
+
+    for (mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
         let delta = time.delta_secs();
 
-        transform.translation.x += velocity.0.x * delta;
-        transform.translation.y += velocity.0.y * delta;
+        ball_transform.translation.x += velocity.0.x * delta;
+        ball_transform.translation.y += velocity.0.y * delta;
 
         let half_width = resolution.screen_dimensions.x / 2.0;
         let half_height = resolution.screen_dimensions.y / 2.0;
         let ball_radius = BALL_RADIUS;
 
-        if transform.translation.x + ball_radius >= half_width
-            || transform.translation.x - ball_radius <= -half_width
+        if ball_transform.translation.x + ball_radius >= half_width
+            || ball_transform.translation.x - ball_radius <= -half_width
         {
             velocity.0.x = -velocity.0.x;
         }
-        if transform.translation.y + ball_radius >= half_height {
+        if ball_transform.translation.y + ball_radius >= half_height {
             velocity.0.y = -velocity.0.y;
         }
-        if transform.translation.y - ball_radius <= -half_height {
+        if ball_transform.translation.y - ball_radius <= -half_height {
             app_exit_events.send(AppExit::Success);
+        }
+
+        let player_half_width = PLAYER_WIDTH / 2.0;
+        let player_half_height = PLAYER_HEIGT / 2.0;
+
+        let ball_bottom = ball_transform.translation.y - ball_radius;
+        let player_top = player_transform.translation.y + player_half_height;
+
+        let ball_x = ball_transform.translation.x;
+        let player_x = player_transform.translation.x;
+
+        let x_collision =
+            ball_x >= player_x - player_half_width && ball_x <= player_x + player_half_width;
+        let y_collision =
+            ball_bottom <= player_top && ball_bottom >= player_transform.translation.y;
+
+        if x_collision && y_collision {
+            velocity.0.y = velocity.0.y.abs();
         }
     }
 }
