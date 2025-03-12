@@ -10,7 +10,7 @@ impl Plugin for IslandPlugin {
 }
 
 #[derive(Component)]
-struct Island;
+pub(crate) struct Island;
 pub const ISLAND_WIDTH: f32 = 200.;
 pub const ISLAND_HEIGHT: f32 = 20.;
 

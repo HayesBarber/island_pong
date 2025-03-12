@@ -1,7 +1,7 @@
 use bevy::{color::palettes::css::WHITE, prelude::*};
 
 use crate::{
-    island::ISLAND_HEIGHT,
+    island::{self, ISLAND_HEIGHT},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
     resolution,
 };
@@ -48,6 +48,7 @@ fn move_ball(
     mut query_set: ParamSet<(
         Query<(&mut Transform, &mut Velocity), With<Ball>>,
         Query<&Transform, With<player::Player>>,
+        Query<&Transform, With<island::Island>>,
     )>,
     mut app_exit_events: EventWriter<AppExit>,
 ) {
