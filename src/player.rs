@@ -28,6 +28,7 @@ fn setup_player(mut commands: Commands, resolution: Res<resolution::Resolution>)
         Player {},
     ));
 }
+
 const SPEED: f32 = 400.;
 fn update_player(
     mut player_query: Query<(&mut Player, &mut Transform)>,
