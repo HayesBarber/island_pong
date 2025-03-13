@@ -5,6 +5,7 @@ pub mod game;
 pub mod island;
 pub mod player;
 pub mod resolution;
+pub mod score;
 
 fn main() {
     App::new()

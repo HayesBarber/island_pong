@@ -1,14 +1,15 @@
-use crate::{ball, island, player, resolution};
+use crate::{ball, island, player, resolution, score};
 use bevy::prelude::*;
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            player::PlayerPlugin,
             resolution::ResolutionPlugin,
+            player::PlayerPlugin,
             island::IslandPlugin,
             ball::BallPlugin,
+            score::ScorePlugin,
         ))
         .add_systems(Startup, setup_scene)
         .add_systems(Update, update_game);
