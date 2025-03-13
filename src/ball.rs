@@ -86,16 +86,15 @@ fn move_ball(
     };
 
     let mut spawn = false;
+    let half_width = resolution.screen_dimensions.x / 2.0;
+    let half_height = resolution.screen_dimensions.y / 2.0;
+    let ball_radius = BALL_RADIUS;
+    let delta = time.delta_secs();
 
     for (mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
-        let delta = time.delta_secs();
-
         ball_transform.translation.x += velocity.0.x * delta;
         ball_transform.translation.y += velocity.0.y * delta;
 
-        let half_width = resolution.screen_dimensions.x / 2.0;
-        let half_height = resolution.screen_dimensions.y / 2.0;
-        let ball_radius = BALL_RADIUS;
         // ball hits left or right walls
         if ball_transform.translation.x + ball_radius >= half_width {
             velocity.0.x = -velocity.0.x.abs();
