@@ -110,16 +110,15 @@ fn move_ball(
         if ball_transform.translation.y - ball_radius <= -half_height {
             app_exit_events.send(AppExit::Success);
         }
-
+        //ball hits paddle
         let ball_bottom = ball_transform.translation.y - ball_radius;
         let x_collision = ball_transform.translation.x >= player_x - player_half_width
             && ball_transform.translation.x <= player_x + player_half_width;
         let y_collision = ball_bottom <= player_top && ball_bottom >= player_y;
-
         if x_collision && y_collision {
             velocity.0.y = velocity.0.y.abs();
         }
-
+        //ball hits island
         let island_x_collision = ball_transform.translation.x >= island_x - island_half_width
             && ball_transform.translation.x <= island_x + island_half_width;
         let island_y_collision = ball_transform.translation.y + ball_radius >= island_bottom
