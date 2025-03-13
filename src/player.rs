@@ -1,4 +1,5 @@
 use crate::resolution;
+use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 
 pub struct PlayerPlugin;
@@ -34,6 +35,7 @@ fn update_player(
     mut player_query: Query<(&mut Player, &mut Transform)>,
     time: Res<Time>,
     keys: Res<ButtonInput<KeyCode>>,
+    mut mouse_motion: EventReader<MouseMotion>,
     resolution: Res<resolution::Resolution>,
 ) {
     let (mut _player, mut transform) = player_query.single_mut();
@@ -54,13 +56,12 @@ fn update_player(
     }
     transform.translation.x += horizontal * time.delta_secs() * SPEED;
 
+    for event in mouse_motion.read() {
+        transform.translation.x += event.delta.x;
+    }
+
     let left_bound = (-resolution.screen_dimensions.x * 0.5) + (PLAYER_WIDTH / 2.);
     let right_bound = (resolution.screen_dimensions.x * 0.5) - (PLAYER_WIDTH / 2.);
 
-    if transform.translation.x > right_bound {
-        transform.translation.x = right_bound;
-    }
-    if transform.translation.x < left_bound {
-        transform.translation.x = left_bound;
-    }
+    transform.translation.x = transform.translation.x.clamp(left_bound, right_bound)
 }
