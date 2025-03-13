@@ -123,15 +123,7 @@ fn move_ball(
         let island_y_collision = ball_transform.translation.y + ball_radius >= island_bottom
             && ball_transform.translation.y - ball_radius <= island_top;
 
-        let hitting_left_side =
-            ball_transform.translation.x - ball_radius <= island_x - island_half_width;
-        let hitting_right_side =
-            ball_transform.translation.x + ball_radius >= island_x + island_half_width;
-
         if island_x_collision && island_y_collision {
-            if hitting_left_side || hitting_right_side {
-                velocity.0.x = -velocity.0.x;
-            }
             velocity.0.y = -velocity.0.y.abs();
             score.0 += 1;
 
