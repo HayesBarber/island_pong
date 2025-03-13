@@ -4,7 +4,7 @@ use rand::Rng;
 use crate::{
     island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
-    resolution,
+    resolution, score,
 };
 
 pub struct BallPlugin;
@@ -50,6 +50,7 @@ fn setup_ball(
 fn move_ball(
     time: Res<Time>,
     resolution: Res<resolution::Resolution>,
+    mut score: ResMut<score::Score>,
     mut query_set: ParamSet<(
         Query<(&mut Transform, &mut Velocity), With<Ball>>,
         Query<&Transform, With<player::Player>>,
@@ -125,6 +126,7 @@ fn move_ball(
                 velocity.0.x = -velocity.0.x;
             }
             velocity.0.y = -velocity.0.y.abs();
+            score.0 += 1;
         }
     }
 }

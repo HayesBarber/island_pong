@@ -7,12 +7,13 @@ pub struct ScorePlugin;
 impl Plugin for ScorePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Score(0)) // Start with score 0
-            .add_systems(Startup, setup_score);
+            .add_systems(Startup, setup_score)
+            .add_systems(Update, update_score_display);
     }
 }
 
 #[derive(Resource)]
-struct Score(i32);
+pub struct Score(pub i32);
 
 #[derive(Component)]
 struct ScoreText;
@@ -29,4 +30,11 @@ fn setup_score(mut commands: Commands, resolution: Res<resolution::Resolution>) 
         },
         ScoreText,
     ));
+}
+
+fn update_score_display(score: Res<Score>, mut query: Query<&mut Text, With<ScoreText>>) {
+    if score.is_changed() {
+        let mut text = query.single_mut();
+        **text = format!("{}", score.0);
+    }
 }
