@@ -97,9 +97,8 @@ fn move_ball(
             app_exit_events.send(AppExit::Success);
         }
         let ball_bottom = ball_transform.translation.y - ball_radius;
-        let ball_x = ball_transform.translation.x;
-        let x_collision =
-            ball_x >= player_x - player_half_width && ball_x <= player_x + player_half_width;
+        let x_collision = ball_transform.translation.x >= player_x - player_half_width
+            && ball_transform.translation.x <= player_x + player_half_width;
         let y_collision = ball_bottom <= player_top && ball_bottom >= player_y;
 
         if x_collision && y_collision {
@@ -111,7 +110,15 @@ fn move_ball(
         let island_y_collision = ball_transform.translation.y + ball_radius >= island_bottom
             && ball_transform.translation.y - ball_radius <= island_top;
 
+        let hitting_left_side =
+            ball_transform.translation.x - ball_radius <= island_x - island_half_width;
+        let hitting_right_side =
+            ball_transform.translation.x + ball_radius >= island_x + island_half_width;
+
         if island_x_collision && island_y_collision {
+            if hitting_left_side || hitting_right_side {
+                velocity.0.x = -velocity.0.x;
+            }
             velocity.0.y = -velocity.0.y.abs();
         }
     }
