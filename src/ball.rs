@@ -104,7 +104,7 @@ fn move_ball(
         }
         // ball hits ceiling
         if ball_transform.translation.y + ball_radius >= half_height {
-            velocity.0.y = -velocity.0.y;
+            velocity.0.y = -velocity.0.y.abs();
         }
         //ball made it past paddle
         if ball_transform.translation.y - ball_radius <= -half_height {
