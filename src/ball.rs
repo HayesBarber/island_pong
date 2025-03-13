@@ -11,7 +11,7 @@ pub struct BallPlugin;
 
 impl Plugin for BallPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_ball)
+        app.add_systems(Startup, spawn_ball)
             .add_systems(Update, move_ball);
     }
 }
@@ -25,7 +25,7 @@ struct Velocity(Vec2);
 const BALL_RADIUS: f32 = 12.;
 const BALL_SPEED: f32 = 450.;
 
-fn setup_ball(
+fn spawn_ball(
     mut commands: Commands,
     resolution: Res<resolution::Resolution>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -49,6 +49,9 @@ fn setup_ball(
 }
 
 fn move_ball(
+    commands: Commands,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: ResMut<Assets<ColorMaterial>>,
     time: Res<Time>,
     resolution: Res<resolution::Resolution>,
     mut score: ResMut<score::Score>,
@@ -81,6 +84,8 @@ fn move_ball(
 
         (island_top, island_x, island_bottom)
     };
+
+    let mut spawn = false;
 
     for (mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
         let delta = time.delta_secs();
@@ -129,9 +134,13 @@ fn move_ball(
             velocity.0.y = -velocity.0.y.abs();
             score.0 += 1;
 
-            if score.0 % 5 == 0 {
+            if score.0 > 0 && score.0 % 5 == 0 {
                 velocity.0 *= 1.2;
+                spawn = true;
             }
         }
+    }
+    if spawn {
+        spawn_ball(commands, resolution, meshes, materials);
     }
 }
