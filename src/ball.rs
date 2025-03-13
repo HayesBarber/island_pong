@@ -26,15 +26,25 @@ const BALL_RADIUS: f32 = 12.;
 const BALL_SPEED: f32 = 450.;
 
 fn spawn_ball(
-    mut commands: Commands,
+    commands: Commands,
     resolution: Res<resolution::Resolution>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let mut rng = rand::rng();
     let random_x = rng.random_range(-1.0..1.0);
     let initial_velocity = Vec2::new(random_x, -1.0).normalize() * BALL_SPEED;
 
+    spawn_ball_with_velocity(commands, resolution, meshes, materials, initial_velocity);
+}
+
+fn spawn_ball_with_velocity(
+    mut commands: Commands,
+    resolution: Res<resolution::Resolution>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+    velocity: Vec2,
+) {
     commands.spawn((
         Mesh2d(meshes.add(Circle::new(BALL_RADIUS))),
         MeshMaterial2d(materials.add(ColorMaterial::from_color(WHITE))),
@@ -44,7 +54,7 @@ fn spawn_ball(
             0.,
         )),
         Ball,
-        Velocity(initial_velocity),
+        Velocity(velocity),
     ));
 }
 
@@ -92,6 +102,7 @@ fn move_ball(
     let delta = time.delta_secs();
 
     let count = query_set.p0().iter().count();
+    let mut spawn_velocity: Option<Vec2> = None;
 
     for (entity, mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
         ball_transform.translation.x += velocity.0.x * delta;
@@ -136,10 +147,17 @@ fn move_ball(
             if score.0 > 0 && score.0 % 5 == 0 {
                 velocity.0 *= 1.2;
                 spawn = true;
+                spawn_velocity = Some(velocity.0);
             }
         }
     }
-    if spawn {
-        spawn_ball(commands, resolution, meshes, materials);
+    if spawn && spawn_velocity.is_some() {
+        spawn_ball_with_velocity(
+            commands,
+            resolution,
+            meshes,
+            materials,
+            spawn_velocity.unwrap(),
+        );
     }
 }
