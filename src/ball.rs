@@ -47,6 +47,7 @@ fn setup_ball(
         Velocity(initial_velocity),
     ));
 }
+
 fn move_ball(
     time: Res<Time>,
     resolution: Res<resolution::Resolution>,
@@ -127,6 +128,10 @@ fn move_ball(
             }
             velocity.0.y = -velocity.0.y.abs();
             score.0 += 1;
+
+            if score.0 % 5 == 0 {
+                velocity.0 *= 1.2;
+            }
         }
     }
 }
