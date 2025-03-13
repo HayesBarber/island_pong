@@ -1,4 +1,5 @@
 use bevy::{color::palettes::css::WHITE, prelude::*};
+use rand::Rng;
 
 use crate::{
     island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
@@ -30,6 +31,10 @@ fn setup_ball(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
+    let mut rng = rand::rng();
+    let random_x = rng.random_range(-1.0..1.0);
+    let initial_velocity = Vec2::new(random_x, -1.0).normalize() * BALL_SPEED;
+
     commands.spawn((
         Mesh2d(meshes.add(Circle::new(BALL_RADIUS))),
         MeshMaterial2d(materials.add(ColorMaterial::from_color(WHITE))),
@@ -39,7 +44,7 @@ fn setup_ball(
             0.,
         )),
         Ball,
-        Velocity(Vec2::new(1.0, -1.0).normalize() * BALL_SPEED),
+        Velocity(initial_velocity),
     ));
 }
 fn move_ball(
