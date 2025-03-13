@@ -1,7 +1,7 @@
 use bevy::{color::palettes::css::WHITE, prelude::*};
 
 use crate::{
-    island::{self, ISLAND_HEIGHT},
+    island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
     resolution,
 };
@@ -52,8 +52,8 @@ fn move_ball(
     )>,
     mut app_exit_events: EventWriter<AppExit>,
 ) {
-    let player_half_width = PLAYER_WIDTH / 2.0;
-    let player_half_height = PLAYER_HEIGT / 2.0;
+    let player_half_width = PLAYER_WIDTH / 2.;
+    let player_half_height = PLAYER_HEIGT / 2.;
     let (player_top, player_x, player_y) = {
         let player_query = query_set.p1();
         let player_transform = player_query.single();
@@ -61,6 +61,18 @@ fn move_ball(
         let player_x = player_transform.translation.x;
         let player_y = player_transform.translation.y;
         (player_top, player_x, player_y)
+    };
+
+    let island_half_width = ISLAND_WIDTH / 2.;
+    let (island_top, island_x, island_bottom) = {
+        let island_query = query_set.p2();
+        let island_transform = island_query.single();
+
+        let island_top = island_transform.translation.y + ISLAND_HEIGHT / 2.0;
+        let island_x = island_transform.translation.x;
+        let island_bottom = island_transform.translation.y - ISLAND_HEIGHT / 2.0;
+
+        (island_top, island_x, island_bottom)
     };
 
     for (mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
@@ -92,6 +104,15 @@ fn move_ball(
 
         if x_collision && y_collision {
             velocity.0.y = velocity.0.y.abs();
+        }
+
+        let island_x_collision = ball_transform.translation.x >= island_x - island_half_width
+            && ball_transform.translation.x <= island_x + island_half_width;
+        let island_y_collision = ball_transform.translation.y + ball_radius >= island_bottom
+            && ball_transform.translation.y - ball_radius <= island_top;
+
+        if island_x_collision && island_y_collision {
+            velocity.0.y = -velocity.0.y.abs();
         }
     }
 }
