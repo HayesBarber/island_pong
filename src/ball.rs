@@ -96,18 +96,21 @@ fn move_ball(
         let half_width = resolution.screen_dimensions.x / 2.0;
         let half_height = resolution.screen_dimensions.y / 2.0;
         let ball_radius = BALL_RADIUS;
-
-        if ball_transform.translation.x + ball_radius >= half_width
-            || ball_transform.translation.x - ball_radius <= -half_width
-        {
-            velocity.0.x = -velocity.0.x;
+        // ball hits left or right walls
+        if ball_transform.translation.x + ball_radius >= half_width {
+            velocity.0.x = -velocity.0.x.abs();
+        } else if ball_transform.translation.x - ball_radius <= -half_width {
+            velocity.0.x = velocity.0.x.abs();
         }
+        // ball hits ceiling
         if ball_transform.translation.y + ball_radius >= half_height {
             velocity.0.y = -velocity.0.y;
         }
+        //ball made it past paddle
         if ball_transform.translation.y - ball_radius <= -half_height {
             app_exit_events.send(AppExit::Success);
         }
+
         let ball_bottom = ball_transform.translation.y - ball_radius;
         let x_collision = ball_transform.translation.x >= player_x - player_half_width
             && ball_transform.translation.x <= player_x + player_half_width;
