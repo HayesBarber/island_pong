@@ -49,14 +49,14 @@ fn spawn_ball(
 }
 
 fn move_ball(
-    commands: Commands,
+    mut commands: Commands,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
     time: Res<Time>,
     resolution: Res<resolution::Resolution>,
     mut score: ResMut<score::Score>,
     mut query_set: ParamSet<(
-        Query<(&mut Transform, &mut Velocity), With<Ball>>,
+        Query<(Entity, &mut Transform, &mut Velocity), With<Ball>>,
         Query<&Transform, With<player::Player>>,
         Query<&Transform, With<island::Island>>,
     )>,
@@ -91,7 +91,9 @@ fn move_ball(
     let ball_radius = BALL_RADIUS;
     let delta = time.delta_secs();
 
-    for (mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
+    let count = query_set.p0().iter().count();
+
+    for (entity, mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
         ball_transform.translation.x += velocity.0.x * delta;
         ball_transform.translation.y += velocity.0.y * delta;
 
@@ -107,7 +109,11 @@ fn move_ball(
         }
         //ball made it past paddle
         if ball_transform.translation.y - ball_radius <= -half_height {
-            app_exit_events.send(AppExit::Success);
+            if count == 1 {
+                app_exit_events.send(AppExit::Success);
+            } else {
+                commands.entity(entity).despawn();
+            }
         }
         //ball hits paddle
         let ball_bottom = ball_transform.translation.y - ball_radius;
