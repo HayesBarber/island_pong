@@ -95,7 +95,6 @@ fn move_ball(
         (island_top, island_x, island_bottom)
     };
 
-    let mut spawn = false;
     let half_width = resolution.screen_dimensions.x / 2.0;
     let half_height = resolution.screen_dimensions.y / 2.0;
     let ball_radius = BALL_RADIUS;
@@ -146,12 +145,11 @@ fn move_ball(
 
             if score.0 > 0 && score.0 % 5 == 0 {
                 velocity.0 *= 1.2;
-                spawn = true;
                 spawn_velocity = Some(velocity.0);
             }
         }
     }
-    if spawn && spawn_velocity.is_some() {
+    if spawn_velocity.is_some() {
         spawn_ball_with_velocity(
             commands,
             resolution,
