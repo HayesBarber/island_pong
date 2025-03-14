@@ -68,7 +68,7 @@ fn move_ball(
     mut query_set: ParamSet<(
         Query<(Entity, &mut Transform, &mut Velocity), With<Ball>>,
         Query<&Transform, With<player::Player>>,
-        Query<&Transform, With<island::Island>>,
+        Query<(&Transform, &mut Sprite), With<island::Island>>,
     )>,
     mut app_exit_events: EventWriter<AppExit>,
 ) {
@@ -86,7 +86,7 @@ fn move_ball(
     let island_half_width = ISLAND_WIDTH / 2.;
     let (island_top, island_x, island_bottom) = {
         let island_query = query_set.p2();
-        let island_transform = island_query.single();
+        let island_transform = island_query.single().0;
 
         let island_top = island_transform.translation.y + ISLAND_HEIGHT / 2.0;
         let island_x = island_transform.translation.x;
@@ -157,5 +157,8 @@ fn move_ball(
             materials,
             spawn_velocity.unwrap(),
         );
+        if let Some(size) = &mut query_set.p2().single_mut().1.custom_size {
+            size.x = (size.x - 5.).max(75.);
+        }
     }
 }
