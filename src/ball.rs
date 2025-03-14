@@ -12,9 +12,12 @@ pub struct BallPlugin;
 
 impl Plugin for BallPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, spawn_ball).add_systems(
+        app.add_systems(
             Update,
-            move_ball.run_if(resource_equals(GameState { running: true })),
+            (
+                spawn_ball,
+                move_ball.run_if(resource_equals(GameState { running: true })),
+            ),
         );
     }
 }
