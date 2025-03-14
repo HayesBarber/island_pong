@@ -114,6 +114,8 @@ fn move_ball(
     for (entity, mut ball_transform, mut velocity) in query_set.p0().iter_mut() {
         ball_transform.translation.x += velocity.0.x * delta;
         ball_transform.translation.y += velocity.0.y * delta;
+        let ball_bottom = ball_transform.translation.y - ball_radius;
+        let ball_top = ball_transform.translation.y + ball_radius;
 
         // ball hits left or right walls
         if ball_transform.translation.x + ball_radius >= half_width {
@@ -122,11 +124,11 @@ fn move_ball(
             velocity.0.x = velocity.0.x.abs();
         }
         // ball hits ceiling
-        if ball_transform.translation.y + ball_radius >= half_height {
+        if ball_top >= half_height {
             velocity.0.y = -velocity.0.y.abs();
         }
         //ball made it past paddle
-        if ball_transform.translation.y - ball_radius <= -half_height {
+        if ball_bottom <= -half_height {
             if count == 1 {
                 app_exit_events.send(AppExit::Success);
             } else {
@@ -134,7 +136,6 @@ fn move_ball(
             }
         }
         //ball hits paddle
-        let ball_bottom = ball_transform.translation.y - ball_radius;
         let x_collision = ball_transform.translation.x >= player_x - player_half_width
             && ball_transform.translation.x <= player_x + player_half_width;
         let y_collision = ball_bottom <= player_top && ball_bottom >= player_y;
@@ -144,8 +145,7 @@ fn move_ball(
         //ball hits island
         let island_x_collision = ball_transform.translation.x >= island_x - island_half_width
             && ball_transform.translation.x <= island_x + island_half_width;
-        let island_y_collision = ball_transform.translation.y + ball_radius >= island_bottom
-            && ball_transform.translation.y - ball_radius <= island_top;
+        let island_y_collision = ball_top >= island_bottom && ball_bottom <= island_top;
 
         if island_x_collision && island_y_collision {
             velocity.0.y = -velocity.0.y.abs();
