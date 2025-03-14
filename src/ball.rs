@@ -129,7 +129,7 @@ fn move_ball(
         }
         //ball made it past paddle
         if ball_bottom <= -half_height {
-            if count == 1 {
+            if count <= 1 {
                 app_exit_events.send(AppExit::Success);
             } else {
                 commands.entity(entity).despawn();
