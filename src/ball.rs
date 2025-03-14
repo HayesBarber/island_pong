@@ -25,17 +25,25 @@ struct Velocity(Vec2);
 const BALL_RADIUS: f32 = 12.;
 const BALL_SPEED: f32 = 450.;
 
+fn get_random_velocity(ball_speed: f32) -> Vec2 {
+    let mut rng = rand::rng();
+    let random_x = rng.random_range(-1.0..1.0);
+    return Vec2::new(random_x, -1.0).normalize() * ball_speed;
+}
+
 fn spawn_ball(
     commands: Commands,
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let mut rng = rand::rng();
-    let random_x = rng.random_range(-1.0..1.0);
-    let initial_velocity = Vec2::new(random_x, -1.0).normalize() * BALL_SPEED;
-
-    spawn_ball_with_velocity(commands, resolution, meshes, materials, initial_velocity);
+    spawn_ball_with_velocity(
+        commands,
+        resolution,
+        meshes,
+        materials,
+        get_random_velocity(BALL_SPEED),
+    );
 }
 
 fn spawn_ball_with_velocity(
@@ -155,7 +163,7 @@ fn move_ball(
             resolution,
             meshes,
             materials,
-            spawn_velocity.unwrap(),
+            get_random_velocity(spawn_velocity.unwrap().length()),
         );
         if let Some(size) = &mut query_set.p2().single_mut().1.custom_size {
             size.x = (size.x - 5.).max(75.);
