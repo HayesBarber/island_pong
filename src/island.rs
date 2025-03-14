@@ -23,7 +23,7 @@ fn setup_island(mut commands: Commands, resolution: Res<resolution::Resolution>)
         },
         Transform::from_translation(Vec3::new(
             0.,
-            (resolution.screen_dimensions.y / 2.) - (ISLAND_HEIGHT / 2.),
+            (resolution.screen_dimensions.y / 2.) - (ISLAND_HEIGHT / 2.) - 10.,
             0.,
         )),
         Island {},
