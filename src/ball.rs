@@ -2,6 +2,7 @@ use bevy::{color::palettes::css::WHITE, prelude::*};
 use rand::Rng;
 
 use crate::{
+    game::{GameStartEvent, GameState},
     island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
     resolution, score,
@@ -11,8 +12,10 @@ pub struct BallPlugin;
 
 impl Plugin for BallPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_ball)
-            .add_systems(Update, move_ball);
+        app.add_systems(Update, spawn_ball).add_systems(
+            Update,
+            move_ball.run_if(resource_equals(GameState { running: true })),
+        );
     }
 }
 
@@ -36,7 +39,11 @@ fn spawn_ball(
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
+    mut start_events: EventReader<GameStartEvent>,
 ) {
+    if start_events.read().count() <= 0 {
+        return;
+    }
     spawn_ball_with_velocity(
         commands,
         resolution,
