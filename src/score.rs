@@ -1,6 +1,7 @@
-use std::fs;
+use std::{fs, io::Write, path::PathBuf};
 
 use bevy::prelude::*;
+use dirs::data_dir;
 use serde::{Deserialize, Serialize};
 
 use crate::{game::GameState, resolution};
@@ -28,8 +29,17 @@ pub struct SaveData {
 #[derive(Resource)]
 pub struct Score(pub i32);
 
+fn get_save_path() -> PathBuf {
+    let mut path = data_dir().unwrap_or_else(|| PathBuf::from("."));
+    path.push("IslandPong");
+    fs::create_dir_all(&path).ok();
+    path.push(SAVE_FILE);
+    path
+}
+
 fn load_save_data() -> SaveData {
-    if let Ok(data) = fs::read_to_string(SAVE_FILE) {
+    let save_path = get_save_path();
+    if let Ok(data) = fs::read_to_string(save_path) {
         if let Ok(save_data) = serde_json::from_str(&data) {
             return save_data;
         }
@@ -38,6 +48,20 @@ fn load_save_data() -> SaveData {
         high_score: -1,
         last_score: -1,
     }
+}
+
+pub fn save_data(score: i32, mut current_data: SaveData) -> SaveData {
+    current_data.last_score = score;
+    if score > current_data.high_score {
+        current_data.high_score = score;
+    }
+
+    let save_path = get_save_path();
+    if let Ok(json) = serde_json::to_string_pretty(&current_data) {
+        let _ = fs::File::create(save_path).and_then(|mut file| file.write_all(json.as_bytes()));
+    }
+
+    current_data
 }
 
 #[derive(Component)]
