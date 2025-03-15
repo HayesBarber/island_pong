@@ -17,7 +17,7 @@ impl Plugin for ScorePlugin {
 pub struct Score(pub i32);
 
 #[derive(Component)]
-struct ScoreText;
+pub struct ScoreText;
 
 pub fn spawn_score(commands: &mut Commands, resolution: &resolution::Resolution) {
     commands.spawn((

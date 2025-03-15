@@ -5,7 +5,8 @@ use crate::{
     game::GameState,
     island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
-    resolution, score,
+    resolution,
+    score::{self, ScoreText},
 };
 
 pub struct BallPlugin;
@@ -78,15 +79,16 @@ fn move_ball(
     mut score: ResMut<score::Score>,
     mut query_set: ParamSet<(
         Query<(Entity, &mut Transform, &mut Velocity), With<Ball>>,
-        Query<&Transform, With<player::Player>>,
-        Query<(&Transform, &mut Sprite), With<island::Island>>,
+        Query<(Entity, &Transform), With<player::Player>>,
+        Query<(Entity, &Transform, &mut Sprite), With<island::Island>>,
+        Query<Entity, With<ScoreText>>,
     )>,
 ) {
     let player_half_width = PLAYER_WIDTH / 2.;
     let player_half_height = PLAYER_HEIGT / 2.;
     let (player_top, player_x, player_y) = {
         let player_query = query_set.p1();
-        let player_transform = player_query.single();
+        let player_transform = player_query.single().1;
         let player_top = player_transform.translation.y + player_half_height;
         let player_x = player_transform.translation.x;
         let player_y = player_transform.translation.y;
@@ -94,15 +96,17 @@ fn move_ball(
     };
 
     let island_half_width = ISLAND_WIDTH / 2.;
-    let (island_top, island_x, island_bottom) = {
+    let (island_entity, island_top, island_x, island_bottom) = {
         let island_query = query_set.p2();
-        let island_transform = island_query.single().0;
+        let island_transform = island_query.single().1;
 
         let island_top = island_transform.translation.y + ISLAND_HEIGHT / 2.0;
         let island_x = island_transform.translation.x;
         let island_bottom = island_transform.translation.y - ISLAND_HEIGHT / 2.0;
 
-        (island_top, island_x, island_bottom)
+        let island_entity = island_query.single().0;
+
+        (island_entity, island_top, island_x, island_bottom)
     };
 
     let half_width = resolution.screen_dimensions.x / 2.0;
@@ -131,10 +135,11 @@ fn move_ball(
         }
         //ball made it past paddle
         if ball_bottom <= -half_height {
-            if count <= 1 {
-                //todo
-            }
             commands.entity(entity).despawn();
+            if count <= 1 {
+                commands.insert_resource(GameState { running: false });
+                commands.entity(island_entity).despawn();
+            }
         }
         //ball hits paddle
         let x_collision = ball_transform.translation.x >= player_x - player_half_width
@@ -166,7 +171,7 @@ fn move_ball(
             materials,
             get_random_velocity(spawn_velocity.unwrap().length()),
         );
-        if let Some(size) = &mut query_set.p2().single_mut().1.custom_size {
+        if let Some(size) = &mut query_set.p2().single_mut().2.custom_size {
             size.x = (size.x - 5.).max(75.);
         }
     }
