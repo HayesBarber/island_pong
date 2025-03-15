@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{game::GameStartEvent, resolution};
+use crate::resolution;
 
 pub struct IslandPlugin;
 impl Plugin for IslandPlugin {
@@ -14,14 +14,7 @@ pub(crate) struct Island;
 pub const ISLAND_WIDTH: f32 = 200.;
 pub const ISLAND_HEIGHT: f32 = 20.;
 
-fn setup_island(
-    mut commands: Commands,
-    resolution: Res<resolution::Resolution>,
-    mut start_events: EventReader<GameStartEvent>,
-) {
-    if start_events.read().count() <= 0 {
-        return;
-    };
+pub fn setup_island(mut commands: Commands, resolution: Res<resolution::Resolution>) {
     commands.spawn((
         Sprite {
             color: Color::srgb(1., 1., 1.),

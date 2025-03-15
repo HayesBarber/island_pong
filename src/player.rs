@@ -1,4 +1,4 @@
-use crate::game::{GameStartEvent, GameState};
+use crate::game::GameState;
 use crate::resolution;
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
@@ -8,11 +8,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (
-                setup_player,
-                update_player.run_if(resource_equals(GameState { running: true })),
-            )
-                .chain(),
+            (update_player.run_if(resource_equals(GameState { running: true })),),
         );
     }
 }
@@ -21,14 +17,7 @@ impl Plugin for PlayerPlugin {
 pub(crate) struct Player {}
 pub const PLAYER_WIDTH: f32 = 100.;
 pub const PLAYER_HEIGT: f32 = 20.;
-fn setup_player(
-    mut commands: Commands,
-    resolution: Res<resolution::Resolution>,
-    mut start_events: EventReader<GameStartEvent>,
-) {
-    if start_events.read().count() <= 0 {
-        return;
-    }
+pub fn setup_player(mut commands: Commands, resolution: Res<resolution::Resolution>) {
     commands.spawn((
         Sprite {
             color: Color::srgb(1., 1., 1.),
