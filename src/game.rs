@@ -38,10 +38,11 @@ fn update_game(
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
+    game_state: Res<GameState>,
 ) {
     if keys.pressed(KeyCode::KeyQ) {
         app_exit_events.send(AppExit::Success);
-    } else if keys.just_released(KeyCode::Enter) {
+    } else if !game_state.running && keys.just_released(KeyCode::Enter) {
         commands.insert_resource(GameState { running: true });
         start_game(&mut commands, resolution, meshes, materials);
     }

@@ -86,13 +86,14 @@ fn move_ball(
 ) {
     let player_half_width = PLAYER_WIDTH / 2.;
     let player_half_height = PLAYER_HEIGT / 2.;
-    let (player_top, player_x, player_y) = {
+    let (player_entity, player_top, player_x, player_y) = {
         let player_query = query_set.p1();
         let player_transform = player_query.single().1;
         let player_top = player_transform.translation.y + player_half_height;
         let player_x = player_transform.translation.x;
         let player_y = player_transform.translation.y;
-        (player_top, player_x, player_y)
+        let player_entity = player_query.single().0;
+        (player_entity, player_top, player_x, player_y)
     };
 
     let island_half_width = ISLAND_WIDTH / 2.;
@@ -108,6 +109,8 @@ fn move_ball(
 
         (island_entity, island_top, island_x, island_bottom)
     };
+
+    let score_entity = query_set.p3().single();
 
     let half_width = resolution.screen_dimensions.x / 2.0;
     let half_height = resolution.screen_dimensions.y / 2.0;
@@ -139,6 +142,8 @@ fn move_ball(
             if count <= 1 {
                 commands.insert_resource(GameState { running: false });
                 commands.entity(island_entity).despawn();
+                commands.entity(player_entity).despawn();
+                commands.entity(score_entity).despawn();
             }
         }
         //ball hits paddle

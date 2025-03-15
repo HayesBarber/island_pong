@@ -20,6 +20,7 @@ pub struct Score(pub i32);
 pub struct ScoreText;
 
 pub fn spawn_score(commands: &mut Commands, resolution: &resolution::Resolution) {
+    commands.insert_resource(Score(0));
     commands.spawn((
         Text::new("0"),
         TextLayout::new_with_justify(JustifyText::Center),
