@@ -11,6 +11,7 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(GameState { running: false })
+            .insert_resource(ClearColor(Color::BLACK))
             .add_plugins((
                 resolution::ResolutionPlugin,
                 player::PlayerPlugin,
