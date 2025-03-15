@@ -34,8 +34,7 @@ fn setup_scene(mut commands: Commands) {
 fn update_game(
     keys: Res<ButtonInput<KeyCode>>,
     mut app_exit_events: EventWriter<AppExit>,
-    mut game_state: ResMut<GameState>,
-    commands: Commands,
+    mut commands: Commands,
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
@@ -43,19 +42,19 @@ fn update_game(
     if keys.pressed(KeyCode::KeyQ) {
         app_exit_events.send(AppExit::Success);
     } else if keys.just_released(KeyCode::Enter) {
-        start_game(commands, resolution, meshes, materials);
-        game_state.running = true;
+        commands.insert_resource(GameState { running: true });
+        start_game(&mut commands, resolution, meshes, materials);
     }
 }
 
 fn start_game(
-    mut commands: Commands,
+    commands: &mut Commands,
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    spawn_island(&mut commands, &resolution);
-    spawn_player(&mut commands, &resolution);
-    spawn_score(&mut commands, &resolution);
-    spawn_ball(&mut commands, resolution, meshes, materials);
+    spawn_island(commands, &resolution);
+    spawn_player(commands, &resolution);
+    spawn_score(commands, &resolution);
+    spawn_ball(commands, resolution, meshes, materials);
 }
