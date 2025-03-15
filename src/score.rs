@@ -36,7 +36,10 @@ pub fn spawn_score(commands: &mut Commands, resolution: &resolution::Resolution)
 
 fn update_score_display(score: Res<Score>, mut query: Query<&mut Text, With<ScoreText>>) {
     if score.is_changed() {
-        let mut text = query.single_mut();
+        let mut text = match query.get_single_mut() {
+            Ok(text) => text,
+            Err(_) => return,
+        };
         **text = format!("{}", score.0);
     }
 }
