@@ -29,8 +29,16 @@ fn setup_scene(mut commands: Commands) {
     commands.spawn(Camera2d { ..default() });
 }
 
-fn update_game(keys: Res<ButtonInput<KeyCode>>, mut app_exit_events: EventWriter<AppExit>) {
+fn update_game(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut app_exit_events: EventWriter<AppExit>,
+    mut game_start_events: EventWriter<GameStartEvent>,
+    mut game_state: ResMut<GameState>,
+) {
     if keys.pressed(KeyCode::KeyQ) {
         app_exit_events.send(AppExit::Success);
+    } else if keys.just_released(KeyCode::Enter) {
+        game_state.running = true;
+        game_start_events.send(GameStartEvent);
     }
 }
