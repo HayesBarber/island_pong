@@ -6,6 +6,7 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(GameState { running: false })
             .add_event::<GameStartEvent>()
+            .add_event::<GameEndEvent>()
             .add_plugins((
                 resolution::ResolutionPlugin,
                 player::PlayerPlugin,
@@ -24,6 +25,9 @@ pub struct GameState {
 
 #[derive(Event)]
 pub struct GameStartEvent;
+
+#[derive(Event)]
+pub struct GameEndEvent;
 
 fn setup_scene(mut commands: Commands) {
     commands.spawn(Camera2d { ..default() });
