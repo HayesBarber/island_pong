@@ -2,7 +2,7 @@ use bevy::{color::palettes::css::WHITE, prelude::*};
 use rand::Rng;
 
 use crate::{
-    game::{GameEndEvent, GameStartEvent, GameState},
+    game::GameState,
     island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
     resolution, score,
@@ -14,11 +14,7 @@ impl Plugin for BallPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (
-                spawn_ball,
-                move_ball.run_if(resource_equals(GameState { running: true })),
-            )
-                .chain(),
+            (move_ball.run_if(resource_equals(GameState { running: true })),),
         );
     }
 }
@@ -29,8 +25,8 @@ struct Ball;
 #[derive(Component)]
 struct Velocity(Vec2);
 
-const BALL_RADIUS: f32 = 12.;
-const BALL_SPEED: f32 = 450.;
+pub const BALL_RADIUS: f32 = 12.;
+pub const BALL_SPEED: f32 = 450.;
 
 fn get_random_velocity(ball_speed: f32) -> Vec2 {
     let mut rng = rand::rng();
@@ -38,16 +34,12 @@ fn get_random_velocity(ball_speed: f32) -> Vec2 {
     return Vec2::new(random_x, -1.0).normalize() * ball_speed;
 }
 
-fn spawn_ball(
+pub fn spawn_ball(
     commands: Commands,
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
-    mut start_events: EventReader<GameStartEvent>,
 ) {
-    if start_events.read().count() <= 0 {
-        return;
-    }
     spawn_ball_with_velocity(
         commands,
         resolution,
@@ -89,7 +81,6 @@ fn move_ball(
         Query<&Transform, With<player::Player>>,
         Query<(&Transform, &mut Sprite), With<island::Island>>,
     )>,
-    mut game_end_events: EventWriter<GameEndEvent>,
 ) {
     let player_half_width = PLAYER_WIDTH / 2.;
     let player_half_height = PLAYER_HEIGT / 2.;
@@ -141,7 +132,7 @@ fn move_ball(
         //ball made it past paddle
         if ball_bottom <= -half_height {
             if count <= 1 {
-                game_end_events.send(GameEndEvent);
+                //todo
             }
             commands.entity(entity).despawn();
         }

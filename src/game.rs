@@ -1,12 +1,13 @@
-use crate::{ball, island, player, resolution, score};
+use crate::{
+    ball::{self, spawn_ball},
+    island, player, resolution, score,
+};
 use bevy::prelude::*;
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(GameState { running: false })
-            .add_event::<GameStartEvent>()
-            .add_event::<GameEndEvent>()
             .add_plugins((
                 resolution::ResolutionPlugin,
                 player::PlayerPlugin,
@@ -23,12 +24,6 @@ pub struct GameState {
     pub running: bool,
 }
 
-#[derive(Event)]
-pub struct GameStartEvent;
-
-#[derive(Event)]
-pub struct GameEndEvent;
-
 fn setup_scene(mut commands: Commands) {
     commands.spawn(Camera2d { ..default() });
 }
@@ -36,13 +31,20 @@ fn setup_scene(mut commands: Commands) {
 fn update_game(
     keys: Res<ButtonInput<KeyCode>>,
     mut app_exit_events: EventWriter<AppExit>,
-    mut game_start_events: EventWriter<GameStartEvent>,
     mut game_state: ResMut<GameState>,
 ) {
     if keys.pressed(KeyCode::KeyQ) {
         app_exit_events.send(AppExit::Success);
     } else if keys.just_released(KeyCode::Enter) {
         game_state.running = true;
-        game_start_events.send(GameStartEvent);
     }
+}
+
+fn start_game(
+    mut commands: Commands,
+    resolution: Res<resolution::Resolution>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+    spawn_ball(commands, resolution, meshes, materials);
 }
