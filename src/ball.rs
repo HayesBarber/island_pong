@@ -142,9 +142,8 @@ fn move_ball(
         if ball_bottom <= -half_height {
             if count <= 1 {
                 game_end_events.send(GameEndEvent);
-            } else {
-                commands.entity(entity).despawn();
             }
+            commands.entity(entity).despawn();
         }
         //ball hits paddle
         let x_collision = ball_transform.translation.x >= player_x - player_half_width
