@@ -35,13 +35,16 @@ pub fn spawn_player(commands: &mut Commands, resolution: &resolution::Resolution
 
 const SPEED: f32 = 400.;
 fn update_player(
-    mut player_query: Query<(&mut Player, &mut Transform)>,
+    mut player_query: Query<&mut Transform>,
     time: Res<Time>,
     keys: Res<ButtonInput<KeyCode>>,
     mut mouse_motion: EventReader<MouseMotion>,
     resolution: Res<resolution::Resolution>,
 ) {
-    let (mut _player, mut transform) = player_query.single_mut();
+    let mut transform = match player_query.get_single_mut() {
+        Ok(player) => player,
+        Err(_) => return,
+    };
 
     let mut horizontal = 0.;
 
