@@ -17,7 +17,8 @@ impl Plugin for BallPlugin {
             (
                 spawn_ball,
                 move_ball.run_if(resource_equals(GameState { running: true })),
-            ),
+            )
+                .chain(),
         );
     }
 }
