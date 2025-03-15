@@ -1,4 +1,7 @@
+use std::fs;
+
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
 use crate::{game::GameState, resolution};
 
@@ -6,15 +9,26 @@ pub struct ScorePlugin;
 
 impl Plugin for ScorePlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Score(0)).add_systems(
+        app.insert_resource(load_score()).add_systems(
             Update,
             (update_score_display.run_if(resource_equals(GameState { running: true })),),
         );
     }
 }
 
-#[derive(Resource)]
+const SAVE_FILE: &str = "score.json";
+
+#[derive(Resource, Serialize, Deserialize)]
 pub struct Score(pub i32);
+
+fn load_score() -> Score {
+    if let Ok(data) = fs::read_to_string(SAVE_FILE) {
+        if let Ok(save_data) = serde_json::from_str(&data) {
+            return save_data;
+        }
+    }
+    Score(0)
+}
 
 #[derive(Component)]
 pub struct ScoreText;
