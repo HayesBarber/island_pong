@@ -2,7 +2,7 @@ use bevy::{color::palettes::css::WHITE, prelude::*};
 use rand::Rng;
 
 use crate::{
-    game::{GameStartEvent, GameState},
+    game::{GameEndEvent, GameStartEvent, GameState},
     island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
     resolution, score,
@@ -89,7 +89,7 @@ fn move_ball(
         Query<&Transform, With<player::Player>>,
         Query<(&Transform, &mut Sprite), With<island::Island>>,
     )>,
-    mut app_exit_events: EventWriter<AppExit>,
+    mut game_end_events: EventWriter<GameEndEvent>,
 ) {
     let player_half_width = PLAYER_WIDTH / 2.;
     let player_half_height = PLAYER_HEIGT / 2.;
@@ -141,7 +141,7 @@ fn move_ball(
         //ball made it past paddle
         if ball_bottom <= -half_height {
             if count <= 1 {
-                app_exit_events.send(AppExit::Success);
+                game_end_events.send(GameEndEvent);
             } else {
                 commands.entity(entity).despawn();
             }
