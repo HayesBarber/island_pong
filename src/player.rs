@@ -35,7 +35,7 @@ pub fn spawn_player(commands: &mut Commands, resolution: &resolution::Resolution
 
 const SPEED: f32 = 400.;
 fn update_player(
-    mut player_query: Query<&mut Transform>,
+    mut player_query: Query<&mut Transform, With<Player>>,
     time: Res<Time>,
     keys: Res<ButtonInput<KeyCode>>,
     mut mouse_motion: EventReader<MouseMotion>,
