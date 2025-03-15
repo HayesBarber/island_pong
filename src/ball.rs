@@ -198,7 +198,6 @@ fn ball_despawn(
     mut commands: Commands,
     ball_query: Query<(Entity, &Transform), With<Ball>>,
     resolution: Res<resolution::Resolution>,
-    mut game_state: ResMut<GameState>,
     player_query: Query<Entity, With<player::Player>>,
     island_query: Query<Entity, With<island::Island>>,
     score_query: Query<Entity, With<ScoreText>>,
@@ -210,7 +209,7 @@ fn ball_despawn(
             commands.entity(entity).despawn();
 
             if ball_query.iter().count() <= 1 {
-                game_state.running = false;
+                commands.insert_resource(GameState { running: false });
                 if let Ok(player_entity) = player_query.get_single() {
                     commands.entity(player_entity).despawn();
                 }
