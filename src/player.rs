@@ -16,7 +16,7 @@ impl Plugin for PlayerPlugin {
 #[derive(Component)]
 pub(crate) struct Player {}
 pub const PLAYER_WIDTH: f32 = 100.;
-pub const PLAYER_HEIGT: f32 = 20.;
+pub const PLAYER_HEIGT: f32 = 15.;
 pub fn spawn_player(commands: &mut Commands, resolution: &resolution::Resolution) {
     commands.spawn((
         Sprite {
