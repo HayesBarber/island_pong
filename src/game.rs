@@ -1,6 +1,9 @@
 use crate::{
     ball::{self, spawn_ball},
-    island, player, resolution, score,
+    island::{self, spawn_island},
+    player::{self, spawn_player},
+    resolution,
+    score::{self, spawn_score},
 };
 use bevy::prelude::*;
 pub struct GamePlugin;
@@ -32,10 +35,15 @@ fn update_game(
     keys: Res<ButtonInput<KeyCode>>,
     mut app_exit_events: EventWriter<AppExit>,
     mut game_state: ResMut<GameState>,
+    commands: Commands,
+    resolution: Res<resolution::Resolution>,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: ResMut<Assets<ColorMaterial>>,
 ) {
     if keys.pressed(KeyCode::KeyQ) {
         app_exit_events.send(AppExit::Success);
     } else if keys.just_released(KeyCode::Enter) {
+        start_game(commands, resolution, meshes, materials);
         game_state.running = true;
     }
 }
@@ -43,8 +51,11 @@ fn update_game(
 fn start_game(
     mut commands: Commands,
     resolution: Res<resolution::Resolution>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    spawn_ball(commands, resolution, meshes, materials);
+    spawn_island(&mut commands, &resolution);
+    spawn_player(&mut commands, &resolution);
+    spawn_score(&mut commands, &resolution);
+    spawn_ball(&mut commands, resolution, meshes, materials);
 }

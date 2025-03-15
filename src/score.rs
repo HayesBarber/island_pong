@@ -19,7 +19,7 @@ pub struct Score(pub i32);
 #[derive(Component)]
 struct ScoreText;
 
-pub fn setup_score(mut commands: Commands, resolution: Res<resolution::Resolution>) {
+pub fn spawn_score(commands: &mut Commands, resolution: &resolution::Resolution) {
     commands.spawn((
         Text::new("0"),
         TextLayout::new_with_justify(JustifyText::Center),

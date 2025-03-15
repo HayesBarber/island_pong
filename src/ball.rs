@@ -35,7 +35,7 @@ fn get_random_velocity(ball_speed: f32) -> Vec2 {
 }
 
 pub fn spawn_ball(
-    commands: Commands,
+    commands: &mut Commands,
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
@@ -50,7 +50,7 @@ pub fn spawn_ball(
 }
 
 fn spawn_ball_with_velocity(
-    mut commands: Commands,
+    commands: &mut Commands,
     resolution: Res<resolution::Resolution>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -160,7 +160,7 @@ fn move_ball(
     }
     if spawn_velocity.is_some() {
         spawn_ball_with_velocity(
-            commands,
+            &mut commands,
             resolution,
             meshes,
             materials,

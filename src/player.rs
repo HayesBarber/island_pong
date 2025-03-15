@@ -17,7 +17,7 @@ impl Plugin for PlayerPlugin {
 pub(crate) struct Player {}
 pub const PLAYER_WIDTH: f32 = 100.;
 pub const PLAYER_HEIGT: f32 = 20.;
-pub fn setup_player(mut commands: Commands, resolution: Res<resolution::Resolution>) {
+pub fn spawn_player(commands: &mut Commands, resolution: &resolution::Resolution) {
     commands.spawn((
         Sprite {
             color: Color::srgb(1., 1., 1.),
