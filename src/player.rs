@@ -29,13 +29,20 @@ fn spawn_player(
 ) {
     for _ in game_start_events.read() {
         commands.spawn((
-            Mesh2d(meshes.add(Capsule2d::new(PLAYER_WIDTH / 2., PLAYER_HEIGT / 2.))),
+            Mesh2d(meshes.add(Capsule2d::new(
+                PLAYER_HEIGT / 2.,
+                PLAYER_WIDTH - PLAYER_HEIGT / 2.,
+            ))),
             MeshMaterial2d(materials.add(Color::srgb(1., 1., 1.))),
-            Transform::from_translation(Vec3::new(
-                0.,
-                (-resolution.screen_dimensions.y / 2.) + PLAYER_HEIGT,
-                0.,
-            )),
+            Transform {
+                translation: Vec3::new(
+                    0.,
+                    (-resolution.screen_dimensions.y / 2.) + PLAYER_HEIGT,
+                    0.,
+                ),
+                rotation: Quat::from_rotation_z(std::f32::consts::FRAC_PI_2),
+                ..default()
+            },
             Player {},
         ));
     }
