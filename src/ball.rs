@@ -146,13 +146,13 @@ fn ball_paddle_collision(
 fn ball_island_collision(
     commands: Commands,
     mut ball_query: Query<(&mut Velocity, &Transform), With<Ball>>,
-    mut island_query: Query<(&Transform, &mut Sprite), With<island::Island>>,
+    mut island_query: Query<&mut Transform, (With<island::Island>, Without<Ball>)>,
     mut score: ResMut<score::Score>,
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let (island_transform, mut island_sprite) = match island_query.get_single_mut() {
+    let mut island_transform = match island_query.get_single_mut() {
         Ok(island) => island,
         Err(_) => return,
     };
@@ -193,9 +193,7 @@ fn ball_island_collision(
             get_random_velocity(new_velocity.length()),
         );
 
-        if let Some(size) = &mut island_sprite.custom_size {
-            size.x = (size.x - 5.).max(75.);
-        }
+        island_transform.scale.x = (island_transform.scale.x - 0.1).max(0.5);
     }
 }
 

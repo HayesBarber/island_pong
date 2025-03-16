@@ -35,6 +35,7 @@ fn spawn_player(
             ))),
             MeshMaterial2d(materials.add(Color::srgb(1., 1., 1.))),
             Transform {
+                scale: Vec3::new(1.0, 1.0, 1.0),
                 translation: Vec3::new(
                     0.,
                     (-resolution.screen_dimensions.y / 2.) + PLAYER_HEIGT,
