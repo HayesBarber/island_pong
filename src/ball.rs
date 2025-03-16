@@ -6,7 +6,7 @@ use crate::{
     island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
     resolution,
-    score::{self, ScoreText},
+    score::{self, ScoreText, save_data},
 };
 
 pub struct BallPlugin;
@@ -201,6 +201,8 @@ fn ball_despawn(
     player_query: Query<Entity, With<player::Player>>,
     island_query: Query<Entity, With<island::Island>>,
     score_query: Query<Entity, With<ScoreText>>,
+    score: Res<score::Score>,
+    saved_data: Res<score::SaveData>,
 ) {
     let half_height = resolution.screen_dimensions.y / 2.0;
 
@@ -219,6 +221,7 @@ fn ball_despawn(
                 if let Ok(score_entity) = score_query.get_single() {
                     commands.entity(score_entity).despawn();
                 }
+                commands.insert_resource(save_data(score.0, *saved_data));
             }
         }
     }
