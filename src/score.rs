@@ -20,7 +20,7 @@ impl Plugin for ScorePlugin {
 }
 
 const SAVE_FILE: &str = "save_data.json";
-#[derive(Resource, Serialize, Deserialize)]
+#[derive(Resource, Serialize, Deserialize, Debug)]
 pub struct SaveData {
     high_score: i32,
     last_score: i32,
@@ -41,6 +41,7 @@ fn load_save_data() -> SaveData {
     let save_path = get_save_path();
     if let Ok(data) = fs::read_to_string(save_path) {
         if let Ok(save_data) = serde_json::from_str(&data) {
+            println!("Saved data: {:?}", save_data);
             return save_data;
         }
     }
