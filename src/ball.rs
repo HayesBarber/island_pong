@@ -212,6 +212,7 @@ fn ball_despawn(
 
             if ball_query.iter().count() <= 1 {
                 commands.insert_resource(GameState { running: false });
+                commands.insert_resource(save_data(score.0, *saved_data));
                 if let Ok(player_entity) = player_query.get_single() {
                     commands.entity(player_entity).despawn();
                 }
@@ -221,7 +222,6 @@ fn ball_despawn(
                 if let Ok(score_entity) = score_query.get_single() {
                     commands.entity(score_entity).despawn();
                 }
-                commands.insert_resource(save_data(score.0, *saved_data));
             }
         }
     }
