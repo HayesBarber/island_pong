@@ -2,7 +2,7 @@ use bevy::{color::palettes::css::WHITE, prelude::*};
 use rand::Rng;
 
 use crate::{
-    game::GameState,
+    game::{GameStartEvent, GameState},
     island::{self, ISLAND_HEIGHT, ISLAND_WIDTH},
     player::{self, PLAYER_HEIGT, PLAYER_WIDTH},
     resolution,
@@ -16,6 +16,7 @@ impl Plugin for BallPlugin {
         app.add_systems(
             Update,
             (
+                spawn_ball,
                 move_ball,
                 ball_wall_collision,
                 ball_paddle_collision,
@@ -42,12 +43,16 @@ fn get_random_velocity(ball_speed: f32) -> Vec2 {
     return Vec2::new(random_x, -1.0).normalize() * ball_speed;
 }
 
-pub fn spawn_ball(
-    commands: &mut Commands,
+fn spawn_ball(
+    commands: Commands,
     resolution: Res<resolution::Resolution>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
+    mut game_start_events: EventReader<GameStartEvent>,
 ) {
+    if game_start_events.read().count() <= 0 {
+        return;
+    }
     spawn_ball_with_velocity(
         commands,
         resolution,
@@ -58,7 +63,7 @@ pub fn spawn_ball(
 }
 
 fn spawn_ball_with_velocity(
-    commands: &mut Commands,
+    mut commands: Commands,
     resolution: Res<resolution::Resolution>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -139,7 +144,7 @@ fn ball_paddle_collision(
 }
 
 fn ball_island_collision(
-    mut commands: Commands,
+    commands: Commands,
     mut ball_query: Query<(&mut Velocity, &Transform), With<Ball>>,
     mut island_query: Query<(&Transform, &mut Sprite), With<island::Island>>,
     mut score: ResMut<score::Score>,
@@ -181,7 +186,7 @@ fn ball_island_collision(
 
     if let Some(new_velocity) = spawn_velocity {
         spawn_ball_with_velocity(
-            &mut commands,
+            commands,
             resolution,
             meshes,
             materials,

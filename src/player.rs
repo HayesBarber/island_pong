@@ -1,4 +1,4 @@
-use crate::game::GameState;
+use crate::game::{GameStartEvent, GameState};
 use crate::resolution;
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
@@ -8,7 +8,10 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (update_player.run_if(resource_equals(GameState { running: true })),),
+            (
+                spawn_player,
+                update_player.run_if(resource_equals(GameState { running: true })),
+            ),
         );
     }
 }
@@ -17,20 +20,25 @@ impl Plugin for PlayerPlugin {
 pub(crate) struct Player {}
 pub const PLAYER_WIDTH: f32 = 100.;
 pub const PLAYER_HEIGT: f32 = 15.;
-pub fn spawn_player(commands: &mut Commands, resolution: &resolution::Resolution) {
-    commands.spawn((
-        Sprite {
-            color: Color::srgb(1., 1., 1.),
-            custom_size: Some(Vec2::new(PLAYER_WIDTH, PLAYER_HEIGT)),
-            ..default()
-        },
-        Transform::from_translation(Vec3::new(
-            0.,
-            (-resolution.screen_dimensions.y / 2.) + PLAYER_HEIGT,
-            0.,
-        )),
-        Player {},
-    ));
+fn spawn_player(
+    mut commands: Commands,
+    resolution: Res<resolution::Resolution>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+    mut game_start_events: EventReader<GameStartEvent>,
+) {
+    for _ in game_start_events.read() {
+        commands.spawn((
+            Mesh2d(meshes.add(Capsule2d::new(PLAYER_WIDTH / 2., PLAYER_HEIGT / 2.))),
+            MeshMaterial2d(materials.add(Color::srgb(1., 1., 1.))),
+            Transform::from_translation(Vec3::new(
+                0.,
+                (-resolution.screen_dimensions.y / 2.) + PLAYER_HEIGT,
+                0.,
+            )),
+            Player {},
+        ));
+    }
 }
 
 const SPEED: f32 = 400.;
