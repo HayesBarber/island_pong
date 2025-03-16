@@ -127,7 +127,7 @@ fn ball_paddle_collision(
     let player_half_height = PLAYER_HEIGT / 2.;
     let player_x = player_transform.translation.x;
     let player_top = player_transform.translation.y + player_half_height;
-    let player_bottom = player_transform.translation.y;
+    let player_bottom = player_transform.translation.y - player_half_height;
 
     for (mut velocity, transform) in query.iter_mut() {
         let ball_x = transform.translation.x;
