@@ -1,6 +1,7 @@
 use crate::{
     ball::{self},
     island::{self},
+    main_menu::{self},
     player::{self},
     resolution,
     score::{self},
@@ -15,6 +16,7 @@ impl Plugin for GamePlugin {
             .add_event::<GameStartEvent>()
             .add_plugins((
                 resolution::ResolutionPlugin,
+                main_menu::MenuPlugin,
                 player::PlayerPlugin,
                 island::IslandPlugin,
                 ball::BallPlugin,

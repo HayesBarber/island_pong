@@ -3,6 +3,7 @@ use bevy::prelude::*;
 pub mod ball;
 pub mod game;
 pub mod island;
+pub mod main_menu;
 pub mod player;
 pub mod resolution;
 pub mod score;
